@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private Button ambient_tips;
     private ImageView overlay;
     private ImageView autofritz;
-    private String app_num = "12";
+    private String app_num = "10";
     private String SERVERIP = "104.196.101.18";
 //    String SERVERIP = "192.168.1.169";
 
