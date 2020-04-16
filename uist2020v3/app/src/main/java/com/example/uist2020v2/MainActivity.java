@@ -48,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +68,8 @@ import com.otaliastudios.cameraview.overlay.OverlayLayout;
 import com.otaliastudios.cameraview.size.Size;
 import com.otaliastudios.cameraview.size.SizeSelector;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.aruco.Dictionary;
@@ -82,6 +85,8 @@ import org.opencv.aruco.Aruco;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private Button ambient_tips;
     private ImageView overlay;
     private ImageView autofritz;
-    private String app_num = "10";
+    private String app_num = "12";
     private String SERVERIP = "104.196.101.18";
 //    String SERVERIP = "192.168.1.169";
 
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView bot_image;
     private Button ambient_top_button;
     private Button ambient_bot_button;
-
+    JSONObject qaJson = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,6 +353,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button qaButton = findViewById(R.id.QAbutton);
+        qaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final QADialog dialog = new QADialog(MainActivity.this);// add here your class name
+
+                dialog.show();
+            }
+        });
+
+
+
         top_text.setText("Component Details");
         mid_text.setText("Some tips will be here");
         bot_text.setText("Example video will be here");
@@ -359,6 +376,7 @@ public class MainActivity extends AppCompatActivity {
         mid_image.setImageBitmap(null);
         bot_image.setImageBitmap(null);
     }
+
 
     private Bitmap style_PosNeg(Bitmap input_bmp, Electronics none){
         Bitmap temp;
@@ -634,34 +652,34 @@ public class MainActivity extends AppCompatActivity {
                 canvas.drawText("digitalRead", (float) hole2.x - 200, (float) hole2.y + 0, yellow);
 
             } else if (name.equals("LED")) {
-                Point pin = getOtherPoint(electronic.pins.get(0));
-                Point hole = holes_position[(int) pin.x].get((int) pin.y);
-                Point tmp = getPosNegPoint(pin, POS);
-                Point pos = holes_position[(int) tmp.x].get((int) tmp.y);
-
-                Point pin1 = getOtherPoint(electronic.pins.get(2));
-                Point hole1 = holes_position[(int) pin1.x].get((int) pin1.y);
-                Point tmp1 = getPosNegPoint(pin1, NEG);
-                Point neg = holes_position[(int) tmp1.x].get((int) tmp1.y);
-
-                Point pin2 = getOtherPoint(electronic.pins.get(3));
-                Point hole2 = holes_position[(int) pin2.x].get((int) pin2.y);
-
-                float pic_width = 30;
-                float pic_height = 60;
-                float left = (float) (neg.x + hole1.x) / 2 - pic_width / 2;
-                float top = (float) (neg.y + hole1.y) / 2 - pic_height / 2;
-
-                //autofritz the resistor to the 5V
-                canvas.drawLine((float) hole1.x + 10, (float) hole1.y + 10, (float) neg.x + 10, (float) neg.y, white);
-                canvas.drawBitmap(resistor, null, new RectF(left, top, left + pic_width, top + pic_height), new Paint());
-
-                //draw the line connects to the ground
-                canvas.drawLine((float) hole.x + 10, (float) hole.y + 10, (float) pos.x + 10, (float) pos.y, red);
-
-                //draw the point for digitalRead
-                canvas.drawRect((float) hole2.x, (float) hole2.y, (float) hole2.x + 15, (float) hole2.y + 15, yellow);
-                canvas.drawText("digitalRead", (float) hole2.x - 200, (float) hole2.y + 0, yellow);
+//                Point pin = getOtherPoint(electronic.pins.get(0));
+//                Point hole = holes_position[(int) pin.x].get((int) pin.y);
+//                Point tmp = getPosNegPoint(pin, POS);
+//                Point pos = holes_position[(int) tmp.x].get((int) tmp.y);
+//
+//                Point pin1 = getOtherPoint(electronic.pins.get(2));
+//                Point hole1 = holes_position[(int) pin1.x].get((int) pin1.y);
+//                Point tmp1 = getPosNegPoint(pin1, NEG);
+//                Point neg = holes_position[(int) tmp1.x].get((int) tmp1.y);
+//
+//                Point pin2 = getOtherPoint(electronic.pins.get(3));
+//                Point hole2 = holes_position[(int) pin2.x].get((int) pin2.y);
+//
+//                float pic_width = 30;
+//                float pic_height = 60;
+//                float left = (float) (neg.x + hole1.x) / 2 - pic_width / 2;
+//                float top = (float) (neg.y + hole1.y) / 2 - pic_height / 2;
+//
+//                //autofritz the resistor to the 5V
+//                canvas.drawLine((float) hole1.x + 10, (float) hole1.y + 10, (float) neg.x + 10, (float) neg.y, white);
+//                canvas.drawBitmap(resistor, null, new RectF(left, top, left + pic_width, top + pic_height), new Paint());
+//
+//                //draw the line connects to the ground
+//                canvas.drawLine((float) hole.x + 10, (float) hole.y + 10, (float) pos.x + 10, (float) pos.y, red);
+//
+//                //draw the point for digitalRead
+//                canvas.drawRect((float) hole2.x, (float) hole2.y, (float) hole2.x + 15, (float) hole2.y + 15, yellow);
+//                canvas.drawText("digitalRead", (float) hole2.x - 200, (float) hole2.y + 0, yellow);
 
             } else if (name.equals("trimpot") || name.equals("potentiometer")) {
                 Point pin = getOtherPoint(electronic.pins.get(0));
